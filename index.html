@@ -228,6 +228,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/%E5%91%A8%E5%9B%9B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="whf">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="吴小佳的糖">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/05/%E5%91%A8%E5%9B%9B/" itemprop="url">周四</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-05T10:43:03+08:00">
+                2019-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="周四"><a href="#周四" class="headerlink" title="周四"></a>周四</h4><h4 id="索引下推（ICP）"><a href="#索引下推（ICP）" class="headerlink" title="索引下推（ICP）"></a>索引下推（ICP）</h4><p>以 InnoDB 表为例。</p>
+<p>在不启用 ICP 的情况下利用二级索引查找数据的过程：</p>
+<ol>
+<li><p>用二级索引查找数据的主键；</p>
+</li>
+<li><p>用主键回表读取完整的行记录；</p>
+</li>
+<li><p>利用 where 语句的条件对行记录进行过滤。</p>
+</li>
+</ol>
+<p>启用 ICP 的情况下利用二级索引查找数据的过程为：</p>
+<ol>
+<li>用二级索引查找数据的主键；</li>
+<li>如果二级索引记录的元组里的列出现在 where 条件里，那么对元组进行过滤；</li>
+<li>对索引元组的主键回表读取完整的行记录；</li>
+<li>利用 where 语句的剩余条件对行记录进行过滤；</li>
+</ol>
+<p>ICP 适用的一个隐含前提是二级索引必须是<strong><u>组合索引</u></strong>、且在使用索引进行扫描时只能采用最左前缀匹配原则。组合索引后面的列出现在 where 条件里，因此可以先过滤索引元组、从而减少回表读的数量。</p>
+<h5 id="deployment"><a href="#deployment" class="headerlink" title="deployment"></a>deployment</h5><ul>
+<li>自动伸缩 </li>
+<li>滚动更新</li>
+</ul>
+<h5 id="statefulset-有状态集合"><a href="#statefulset-有状态集合" class="headerlink" title="statefulset 有状态集合"></a>statefulset 有状态集合</h5><ul>
+<li>使用<code>headless service</code>进行绑定，相当于绑定ip了，可以使用这个service直接访问到具体代理的pod，而不需要知道pod的具体ip</li>
+</ul>
+<h5 id="configMap"><a href="#configMap" class="headerlink" title="configMap"></a>configMap</h5><ul>
+<li><p>创建文件类型的配置 kubectl create configmap <name> –from-file=<key>=<path></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">kubectl create configmap node1 --from-file=./data/node1/config  # key 可以省略，省略后文件名作为key</span></pre></td></tr></table></figure>
+</li>
+<li><p>使用的时候需要使用subPath指定configmap的key</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="attr">volumeMounts:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">license</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="attr">subPath:</span> <span class="string">License_enc</span> <span class="comment">#key</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    <span class="attr">mountPath:</span> <span class="string">/root/app/License_enc</span> <span class="comment">#这样就会覆盖已存在的这个文件</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="attr">volumes:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">license</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">  <span class="attr">configMap:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">    <span class="attr">name:</span> <span class="string">image-config</span></span></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="service"><a href="#service" class="headerlink" title="service"></a>service</h5><ul>
+<li><p>端口映射</p>
+</li>
+<li><p>负载均衡</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="attr">metadata:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">  <span class="attr">name:</span> <span class="string">nginxsvc</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">  <span class="attr">ports:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">      <span class="attr">nodePort:</span> <span class="number">30001</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">  <span class="attr">selector:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span></pre></td></tr></table></figure>
+</li>
+<li><p><code>headless service</code> 需要指定一下 <code>targetPort</code> 表示代理的是 pod 的哪个端口</p>
+</li>
+</ul>
+<h5 id="rc-rs"><a href="#rc-rs" class="headerlink" title="rc? rs?"></a>rc? rs?</h5><h5 id="pv"><a href="#pv" class="headerlink" title="pv"></a>pv</h5><ul>
+<li><pre><code class="yaml"><span class="attr">apiVersion:</span> <span class="string">v1</span>
+<span class="attr">kind:</span> <span class="string">PersistentVolume</span>
+<span class="attr">metadata:</span>
+  <span class="attr">name:</span> <span class="string">pv01</span>
+  <span class="attr">labels:</span>
+    <span class="attr">type:</span> <span class="string">nfs01</span>
+<span class="attr">spec:</span>
+  <span class="attr">capacity:</span>
+    <span class="attr">storage:</span> <span class="string">1Gi</span>
+  <span class="attr">accessModes:</span>
+    <span class="bullet">-</span> <span class="string">ReadWriteMany</span>
+  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Recycle</span>
+  <span class="attr">nfs:</span>
+    <span class="attr">path:</span> <span class="string">"/code"</span>
+    <span class="attr">server:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.11</span>
+    <span class="attr">readOnly:</span> <span class="literal">false</span>
+<span class="string"><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">##### pvc</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">&#96;&#96;&#96;yaml</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">kind: PersistentVolumeClaim</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">metadata:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">  name: pvc-wp</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">spec:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">  resources:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    requersts:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">      storage: 1Gi</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">  accessModes:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    - ReadWriteMany</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">  selector:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">    matchLabels:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">      pv: nfs01</span></pre></td></tr></table></figure></span>
+</code></pre>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/03/%E5%91%A8%E4%BA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -935,7 +1118,7 @@
               
                 <a href="/archives/%20%7C%7C%20archive">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
