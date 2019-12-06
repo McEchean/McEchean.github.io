@@ -299,7 +299,7 @@
       
         
           
-            <h2 id="friday"><a href="#friday" class="headerlink" title="friday"></a>friday</h2><h4 id="docker单机网络通信"><a href="#docker单机网络通信" class="headerlink" title="docker单机网络通信"></a>docker单机网络通信</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206111747824.png" alt="image-20191206111747824" style="zoom:40%;" />
+            <h2 id="friday"><a href="#friday" class="headerlink" title="friday"></a>friday</h2><h4 id="docker单机网络通信"><a href="#docker单机网络通信" class="headerlink" title="docker单机网络通信"></a>docker单机网络通信</h4><img src="/image/image-20191206111747824.png" alt="image-20191206111747824" style="zoom:40%;" />
 
 <ul>
 <li>首先网络模式是host模式：docker直接使用宿主机的网络栈</li>
@@ -316,12 +316,12 @@
 </ol>
 </li>
 </ul>
-<h4 id="访问其他主机"><a href="#访问其他主机" class="headerlink" title="访问其他主机"></a>访问其他主机</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206113948751.png" alt="image-20191206113948751" style="zoom:40%;" />
+<h4 id="访问其他主机"><a href="#访问其他主机" class="headerlink" title="访问其他主机"></a>访问其他主机</h4><img src="/image/image-20191206113948751.png" alt="image-20191206113948751" style="zoom:40%;" />
 
 <ul>
 <li>请求到达docker0，根据宿主机路由表里的直连路由规则，会将请求转发给宿主机eth0,让宿主机处理与其他宿主机的通信</li>
 </ul>
-<h4 id="跨主机容器通信"><a href="#跨主机容器通信" class="headerlink" title="跨主机容器通信"></a>跨主机容器通信</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206114400331.png" alt="image-20191206114400331" style="zoom:40%;" />
+<h4 id="跨主机容器通信"><a href="#跨主机容器通信" class="headerlink" title="跨主机容器通信"></a>跨主机容器通信</h4><img src="/image/image-20191206114400331.png" alt="image-20191206114400331" style="zoom:40%;" />
 
 <ul>
 <li><code>flannel</code>框架</li>
@@ -334,7 +334,7 @@
 <li>进程 <code>flanneld</code>会监听 <code>8285</code>这个端口，进行通信</li>
 <li><code>node2</code>进行解析等，做出响应</li>
 </ul>
-<h4 id="性能问题（经过了三次拷贝）"><a href="#性能问题（经过了三次拷贝）" class="headerlink" title="性能问题（经过了三次拷贝）"></a>性能问题（经过了三次拷贝）</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206134823323.png" alt="image-20191206134823323" style="zoom:30%;" />
+<h4 id="性能问题（经过了三次拷贝）"><a href="#性能问题（经过了三次拷贝）" class="headerlink" title="性能问题（经过了三次拷贝）"></a>性能问题（经过了三次拷贝）</h4><img src="/image/image-20191206134823323.png" alt="image-20191206134823323" style="zoom:30%;" />
 
 <h4 id="VXLAN技术实现通信"><a href="#VXLAN技术实现通信" class="headerlink" title="VXLAN技术实现通信"></a>VXLAN技术实现通信</h4><ul>
 <li><code>flanneld</code>进程会在<code>node</code>启动之后将，<code>flanneld.1</code>设备的<code>mac</code>地址，<code>flanneld.1</code>对应的网段，以及宿主机<code>ip</code>都会写入到所有<code>flanneld</code>所在的宿主机里面，这样就可以直接拿到对应网段的对应<code>flanneld.1</code>的<code>mac</code>，以及宿主机<code>ip</code></li>
