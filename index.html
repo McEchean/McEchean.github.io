@@ -228,6 +228,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/06/friday/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="whf">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="吴小佳的糖">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/12/06/friday/" itemprop="url">friday</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-06T11:16:34+08:00">
+                2019-12-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="friday"><a href="#friday" class="headerlink" title="friday"></a>friday</h2><h4 id="docker单机网络通信"><a href="#docker单机网络通信" class="headerlink" title="docker单机网络通信"></a>docker单机网络通信</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206111747824.png" alt="image-20191206111747824" style="zoom:40%;" />
+
+<ul>
+<li>首先网络模式是host模式：docker直接使用宿主机的网络栈</li>
+<li>宿主机会有一个docker0的网卡，这个就是负责链接所有docker容器网络的</li>
+<li><strong><code>Veth Pair</code></strong> 这个设备类似于网线，将docker容器的eth0网络和宿主机网络的docker0链接起来</li>
+<li>流程<ol>
+<li><code>Container1</code> 发送<code>ARP</code>请求到<code>eth0</code></li>
+<li>因为 <code>veth Pair</code> 的存在，所以请求立马会在另一端，即宿主机中 <code>docker0</code> 中的一张虚拟网卡 <code>veth9c02e56</code></li>
+<li>因为 <code>veth9c02e56</code> 很多功能都是没有的，所以直接将请求转发给<code>docker0</code></li>
+<li><code>docker0</code> 通过 <code>ARP</code> 广播转发到所有链接到他自己的虚拟网卡上，</li>
+<li>所以<code>container2</code>的网络栈就会处理这个广播请求，返回<code>mac</code>地址给<code>container1</code></li>
+<li><code>containder1</code>根据收到的mac地址进行发送数据，<code>docker0</code>接收到数据之后根据<code>mac</code>地址和<code>cam</code>表查出对应的端口为<code>vethb4963f3</code>,然后将数据直接发往这个端口</li>
+<li><code>container2</code>接收到这个数据之后按照之前的流程响应pong</li>
+</ol>
+</li>
+</ul>
+<h4 id="访问其他主机"><a href="#访问其他主机" class="headerlink" title="访问其他主机"></a>访问其他主机</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206113948751.png" alt="image-20191206113948751" style="zoom:40%;" />
+
+<ul>
+<li>请求到达docker0，根据宿主机路由表里的直连路由规则，会将请求转发给宿主机eth0,让宿主机处理与其他宿主机的通信</li>
+</ul>
+<h4 id="跨主机容器通信"><a href="#跨主机容器通信" class="headerlink" title="跨主机容器通信"></a>跨主机容器通信</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206114400331.png" alt="image-20191206114400331" style="zoom:40%;" />
+
+<ul>
+<li><code>flannel</code>框架</li>
+<li><code>container1</code>发起请求，转发到docker0, </li>
+<li><code>docker0</code>无法匹配到相应的网段，所以交给宿主机默认路由规则，</li>
+<li><code>Flannel</code> 已经在宿主机上创建出了一系列的路由规则，所以请求会到达一个叫做<code>flannel0</code>的设备中，而<code>flannel0</code>设备作用就是将<code>ip</code>包在系统内核态和用户态之间传递</li>
+<li>所以<code>ip</code>包会由<code>flannel0</code>包装后传递到<code>flannel</code>进程</li>
+<li>因为fannel管理的容器网络里，每个宿主机都有自己的子网，这些对应关系保存在etcd中。</li>
+<li>所以当<code>flannel</code>进程接收到<code>ip</code>包之后，会直接知道ip所在的子网,然后封装成<code>udp</code>包直接就发送给了<code>node2</code>上。</li>
+<li>进程 <code>flanneld</code>会监听 <code>8285</code>这个端口，进行通信</li>
+<li><code>node2</code>进行解析等，做出响应</li>
+</ul>
+<h4 id="性能问题（经过了三次拷贝）"><a href="#性能问题（经过了三次拷贝）" class="headerlink" title="性能问题（经过了三次拷贝）"></a>性能问题（经过了三次拷贝）</h4><img src="/Users/wanghengfang/Library/Application Support/typora-user-images/image-20191206134823323.png" alt="image-20191206134823323" style="zoom:30%;" />
+
+<h4 id="VXLAN技术实现通信"><a href="#VXLAN技术实现通信" class="headerlink" title="VXLAN技术实现通信"></a>VXLAN技术实现通信</h4><ul>
+<li><code>flanneld</code>进程会在<code>node</code>启动之后将，<code>flanneld.1</code>设备的<code>mac</code>地址，<code>flanneld.1</code>对应的网段，以及宿主机<code>ip</code>都会写入到所有<code>flanneld</code>所在的宿主机里面，这样就可以直接拿到对应网段的对应<code>flanneld.1</code>的<code>mac</code>，以及宿主机<code>ip</code></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/05/%E5%91%A8%E5%9B%9B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1101,7 +1260,7 @@
               
                 <a href="/archives/%20%7C%7C%20archive">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
