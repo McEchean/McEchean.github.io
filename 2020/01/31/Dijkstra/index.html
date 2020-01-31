@@ -1,10 +1,14 @@
 <!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>Dijkstra | 吴小佳的糖</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.0/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><meta name="generator" content="Hexo 4.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Dijkstra</h1><a id="logo" href="/.">吴小佳的糖</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Dijkstra</h1><div class="post-meta">Jan 31, 2020</div><a class="ds-thread-count" href="/2020/01/31/Dijkstra/#SOHUCS"><span id="changyan_count_unit" style="font-size: 15px; color: #6E7173;">0</span><span> Comment</span></a><script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js" async></script><div class="post-content"><ul>
 <li><p>介绍</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">即迪杰斯特拉算法，是从一个顶点到其余各顶点的最短路径算法，解决的是有向图中最短路径问题。迪杰斯特拉算法主要特点是以起始点为中心向外层层扩展，直到扩展到终点为止，是一种广度优先的搜索方法。</span></pre></td></tr></table></figure>
+<p>即迪杰斯特拉算法，是从一个顶点到其余各顶点的最短路径算法，解决的是有向图中最短路径问题。迪杰斯特拉算法主要特点是以起始点为中心向外层层扩展，直到扩展到终点为止，是一种广度优先的搜索方法。</p>
 </li>
+</ul>
+<ul>
 <li><p>原理</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">最优子路径存在。假设从S→E存在一条最短路径SE，且该路径经过点A，那么可以确定SA子路径一定是S→A的最短路径。证明：反证法。如果子路径SA不是最短的，那么就必然存在一条更短的&#39;SA，从而SE路径也就不是最短，与原假设矛盾。</span></pre></td></tr></table></figure>
+<p>最优子路径存在。假设从S→E存在一条最短路径SE，且该路径经过点A，那么可以确定SA子路径一定是S→A的最短路径。证明：反证法。如果子路径SA不是最短的，那么就必然存在一条更短的’SA，从而SE路径也就不是最短，与原假设矛盾。</p>
 </li>
+</ul>
+<ul>
 <li><p>过程动态图片参考<br><a href="https://zhuanlan.zhihu.com/p/34624812" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/34624812</a></p>
 </li>
 <li><p>代码实现了一下, 参考动态图片看代码</p>
